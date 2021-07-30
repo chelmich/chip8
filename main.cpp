@@ -33,6 +33,10 @@ void print_usage() {
     printf("Usage: ./chip8 [FILE]\n");
 }
 
+void log_SDL_error(char const* function) {
+    fprintf(stderr, "ERROR: %s: %s\n", function, SDL_GetError());
+}
+
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         print_usage();
@@ -40,7 +44,7 @@ int main(int argc, char* argv[]) {
     }
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0)  {
-        fprintf(stderr, "ERROR: SDL_Init: %s\n", SDL_GetError());
+        log_SDL_error("SDL_Init");
         return 1;
     }
 
@@ -53,13 +57,25 @@ int main(int argc, char* argv[]) {
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         64 * scale, 32 * scale,
         SDL_WINDOW_SHOWN);
+    if (window == nullptr) {
+        log_SDL_error("SDL_CreateWindow");
+        SDL_Quit();
+        return 1;
+    }
 
     SDL_Renderer* renderer = SDL_CreateRenderer(window, -1,
         SDL_RENDERER_ACCELERATED);
+    if (renderer == nullptr) {
+        log_SDL_error("SDL_CreateRenderer");
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
 
     SDL_Color bg_color = {26, 42, 61, 255};
     SDL_Color fg_color = {202, 217, 235, 255};
 
+    // Main loop
     bool shouldClose = false;
     while (!shouldClose) {
         SDL_Event event;
@@ -90,7 +106,10 @@ int main(int argc, char* argv[]) {
         SDL_RenderPresent(renderer);
     }
 
+    // Clean up SDL
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+
+    return 0;
 }
