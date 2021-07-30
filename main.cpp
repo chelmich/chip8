@@ -277,6 +277,12 @@ void Chip8::update() {
             ir += regs[x_reg];
             pc += 2;
             return;
+        case 0x33:
+            mem[ir] = regs[x_reg] / 100;
+            mem[ir + 1] = (regs[x_reg] / 10) % 10;
+            mem[ir + 2] = regs[x_reg] % 10;
+            pc += 2;
+            return;
         case 0x55:
             for (int i = 0; i <= x_reg; i++) {
                 mem[ir + i] = regs[i];
