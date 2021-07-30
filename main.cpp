@@ -45,9 +45,14 @@ public:
     // uint8_t screen[256];
     uint8_t screen[256] = {};
 
+    // TODO: decrement
+    uint8_t delay_timer;
+    uint8_t sound_timer;
+
     void loadROM(char* filename);
     void update();
     void draw(SDL_Renderer* renderer, int scale) const;
+
 private:
     void blit(uint8_t x, uint8_t y, uint8_t n);
 };
@@ -258,6 +263,39 @@ void Chip8::update() {
         blit(regs[x_reg], regs[y_reg], n);
         pc += 2;
         return;
+    case 0xf:
+        switch(nn) {
+        case 0x15:
+            delay_timer = regs[x_reg];
+            pc += 2;
+            return;
+        case 0x18:
+            sound_timer = regs[x_reg];
+            pc += 2;
+            return;
+        case 0x1e:
+            ir += regs[x_reg];
+            pc += 2;
+            return;
+        case 0x55:
+            for (int i = 0; i <= x_reg; i++) {
+                mem[ir + i] = regs[i];
+            }
+            // NOTE: possible quirk flag here, some emulators don't change ir
+            ir += x_reg + 1;
+            pc += 2;
+            return;
+        case 0x65:
+            for (int i = 0; i <= x_reg; i++) {
+                regs[i] = mem[ir + i];
+            }
+            ir += x_reg + 1; // see note on 0x55
+            pc += 2;
+            return;
+        default:
+            break;
+        }
+        break;
     default:
         break;
     }
