@@ -1,0 +1,5 @@
+# chip-8 ROMs
+*.ch8
+
+# Build directory
+build/
