@@ -20,4 +20,7 @@ public:
 
 private:
     SDL_Texture* m_texture;
+
+    const int m_xres = 64;
+    const int m_yres = 32;
 };
