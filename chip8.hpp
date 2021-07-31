@@ -3,8 +3,6 @@
 #include <stdint.h>
 #include <stack>
 
-#include <SDL2/SDL_render.h>
-
 class Chip8 {
 public:
     uint8_t mem[4096] = {};
@@ -23,7 +21,6 @@ public:
 
     void loadROM(char* filename);
     void update();
-    void draw(SDL_Renderer* renderer, int scale) const;
 
 private:
     void blit(uint8_t x, uint8_t y, uint8_t n);

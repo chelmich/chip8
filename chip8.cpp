@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "chip8.hpp"
 
@@ -253,21 +254,6 @@ void Chip8::update() {
     }
 
     printf("Unknown instruction: %04x\n", instruction);
-}
-
-void Chip8::draw(SDL_Renderer* renderer, int scale) const {
-    for (int x = 0; x < 64; x++) {
-        for (int y = 0; y < 32; y++) {
-            int index = y * 64 + x;
-            int byte = index / 8;
-            int bit = index % 8;
-
-            if (screen[byte] & (1 << bit)) {
-                SDL_Rect rect = {x * scale, y * scale, scale, scale};
-                SDL_RenderFillRect(renderer, &rect);
-            }
-        }
-    }
 }
 
 void Chip8::blit(uint8_t xpos, uint8_t ypos, uint8_t num) {

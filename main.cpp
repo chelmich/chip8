@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 
 #include "chip8.hpp"
+#include "screen.hpp"
 
 void print_registers(uint8_t regs[16]) {
     for (int i = 0; i < 16; i++) {
@@ -51,11 +52,14 @@ int main(int argc, char* argv[]) {
     Chip8 chip;
     chip.loadROM(argv[1]);
 
-    int scale = 8;
+    Screen screen;
+    screen.scale = 8;
+    screen.bg = {26, 42, 61, 255};
+    screen.fg = {202, 217, 235, 255};
 
     SDL_Window* window = SDL_CreateWindow("chip-8 emulator",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        64 * scale, 32 * scale,
+        64 * screen.scale, 32 * screen.scale,
         SDL_WINDOW_SHOWN);
     if (window == nullptr) {
         log_SDL_error("SDL_CreateWindow");
@@ -71,9 +75,6 @@ int main(int argc, char* argv[]) {
         SDL_Quit();
         return 1;
     }
-
-    SDL_Color bg_color = {26, 42, 61, 255};
-    SDL_Color fg_color = {202, 217, 235, 255};
 
     // Main loop
     bool shouldClose = false;
@@ -97,12 +98,7 @@ int main(int argc, char* argv[]) {
             break;
         }
 
-        SDL_SetRenderDrawColor(renderer,
-            bg_color.r, bg_color.g, bg_color.b, bg_color.a);
-        SDL_RenderClear(renderer);
-        SDL_SetRenderDrawColor(renderer,
-            fg_color.r, fg_color.g, fg_color.b, fg_color.a);
-        chip.draw(renderer, scale);
+        screen.draw(renderer, chip);
         SDL_RenderPresent(renderer);
     }
 
