@@ -50,6 +50,7 @@ int main(int argc, char* argv[]) {
     }
 
     Chip8 chip;
+    chip.loadFont();
     chip.loadROM(argv[1]);
 
     int scale = 8;

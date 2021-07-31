@@ -20,8 +20,10 @@ public:
     uint8_t sound_timer;
 
     void loadROM(char* filename);
+    void loadFont();
     void update();
 
 private:
     void blit(uint8_t x, uint8_t y, uint8_t n);
+    uint16_t m_fontOffset = 0x10;
 };
