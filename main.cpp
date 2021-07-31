@@ -52,14 +52,15 @@ int main(int argc, char* argv[]) {
     Chip8 chip;
     chip.loadROM(argv[1]);
 
+    int scale = 8;
+
     Screen screen;
-    screen.scale = 8;
     screen.bg = {26, 42, 61, 255};
     screen.fg = {202, 217, 235, 255};
 
     SDL_Window* window = SDL_CreateWindow("chip-8 emulator",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        64 * screen.scale, 32 * screen.scale,
+        64 * scale + 20, 32 * scale + 20,
         SDL_WINDOW_SHOWN);
     if (window == nullptr) {
         log_SDL_error("SDL_CreateWindow");
@@ -75,6 +76,9 @@ int main(int argc, char* argv[]) {
         SDL_Quit();
         return 1;
     }
+
+    screen.createTexture(renderer);
+    screen.update(renderer, chip);
 
     // Main loop
     bool shouldClose = false;
@@ -93,16 +97,22 @@ int main(int argc, char* argv[]) {
                 break;
             case SDLK_s:
                 chip.update();
+                screen.update(renderer, chip);
                 break;
             }
             break;
         }
 
-        screen.draw(renderer, chip);
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
+        screen.draw(renderer, 10, 10, scale);
+
         SDL_RenderPresent(renderer);
     }
 
     // Clean up SDL
+    screen.destroyTexture();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
