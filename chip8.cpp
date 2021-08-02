@@ -196,21 +196,29 @@ void Chip8::update() {
             // TODO: set flags
             pc += 2;
             return;
-        case 0x5:
-            regs[x_reg] -= regs[y_reg];
-            // TODO: set flags
+        case 0x5: {
+            uint8_t flag;
+            if (regs[x_reg] > regs[y_reg]) flag = 0x1;
+            else flag = 0x0;
+            regs[x_reg] = regs[x_reg] - regs[y_reg];
+            regs[0xf] = flag;
             pc += 2;
             return;
+        }
         case 0x6:
             regs[x_reg] = (regs[y_reg] >> 1);
             // TODO: set flags
             pc += 2;
             return;
-        case 0x7:
+        case 0x7: {
+            uint8_t flag;
+            if (regs[y_reg] > regs[x_reg]) flag = 0x1;
+            else flag = 0x0;
             regs[x_reg] = regs[y_reg] - regs[x_reg];
-            // TODO: set flags
+            regs[0xf] = flag;
             pc += 2;
             return;
+        }
         case 0xe:
             regs[x_reg] = (regs[y_reg] << 1);
             // TODO: set flags
