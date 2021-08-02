@@ -12,12 +12,19 @@ public:
     uint16_t ir = 0; // index register
     std::stack<uint16_t> stack = {};
 
-    // uint8_t screen[256];
     uint8_t screen[256] = {};
 
     // TODO: decrement
     uint8_t delay_timer;
     uint8_t sound_timer;
+
+    // The original interpreter uses VY as the source for the bitshift
+    // instructions. Later interpreters ignore it and shift VX in-place.
+    bool quirk_shift = false;
+
+    // Some interpreters don't increment the index register for the FX55 and
+    // FX65 instructions.
+    bool quirk_regs_load_store = false;
 
     void loadROM(char* filename);
     void loadFont();

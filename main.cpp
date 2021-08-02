@@ -53,6 +53,9 @@ int main(int argc, char* argv[]) {
     chip.loadFont();
     chip.loadROM(argv[1]);
 
+    chip.quirk_shift = true;
+    chip.quirk_regs_load_store = true;
+
     int scale = 8;
 
     Screen screen;

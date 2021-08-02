@@ -207,8 +207,7 @@ void Chip8::update() {
             return;
         }
         case 0x6: {
-            // Note: later emulators shift VX in-place, should add a quirk flag
-            regs[x_reg] = regs[y_reg];
+            if (!quirk_shift) regs[x_reg] = regs[y_reg];
 
             uint8_t flag;
             if (regs[x_reg] & 0x01) flag = 0x1;
@@ -230,10 +229,10 @@ void Chip8::update() {
             return;
         }
         case 0xe: {
-            regs[x_reg] = regs[y_reg]; // see note on 8XY6
+            if (!quirk_shift) regs[x_reg] = regs[y_reg];
 
             uint8_t flag;
-            if (regs[x_reg] & 0x80) {flag = 0x1; printf("oop");}
+            if (regs[x_reg] & 0x80) flag = 0x1;
             else flag = 0x0;
 
             regs[x_reg] <<= 1;
@@ -289,15 +288,14 @@ void Chip8::update() {
             for (int i = 0; i <= x_reg; i++) {
                 mem[ir + i] = regs[i];
             }
-            // NOTE: possible quirk flag here, some emulators don't change ir
-            ir += x_reg + 1;
+            if (!quirk_regs_load_store) ir += x_reg + 1;
             pc += 2;
             return;
         case 0x65:
             for (int i = 0; i <= x_reg; i++) {
                 regs[i] = mem[ir + i];
             }
-            ir += x_reg + 1; // see note on FX55
+            if (!quirk_regs_load_store) ir += x_reg + 1;
             pc += 2;
             return;
         default:
