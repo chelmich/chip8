@@ -200,30 +200,47 @@ void Chip8::update() {
             uint8_t flag;
             if (regs[x_reg] > regs[y_reg]) flag = 0x1;
             else flag = 0x0;
+
             regs[x_reg] = regs[x_reg] - regs[y_reg];
             regs[0xf] = flag;
             pc += 2;
             return;
         }
-        case 0x6:
-            regs[x_reg] = (regs[y_reg] >> 1);
-            // TODO: set flags
+        case 0x6: {
+            // Note: later emulators shift VX in-place, should add a quirk flag
+            regs[x_reg] = regs[y_reg];
+
+            uint8_t flag;
+            if (regs[x_reg] & 0x01) flag = 0x1;
+            else flag = 0x0;
+
+            regs[x_reg] >>= 1;
+            regs[0xf] = flag;
             pc += 2;
             return;
+        }
         case 0x7: {
             uint8_t flag;
             if (regs[y_reg] > regs[x_reg]) flag = 0x1;
             else flag = 0x0;
+
             regs[x_reg] = regs[y_reg] - regs[x_reg];
             regs[0xf] = flag;
             pc += 2;
             return;
         }
-        case 0xe:
-            regs[x_reg] = (regs[y_reg] << 1);
-            // TODO: set flags
+        case 0xe: {
+            regs[x_reg] = regs[y_reg]; // see note on 8XY6
+
+            uint8_t flag;
+            if (regs[x_reg] & 0x80) {flag = 0x1; printf("oop");}
+            else flag = 0x0;
+
+            regs[x_reg] <<= 1;
+            regs[0xf] = flag;
             pc += 2;
             return;
+        }
         default:
             break;
         }
@@ -280,7 +297,7 @@ void Chip8::update() {
             for (int i = 0; i <= x_reg; i++) {
                 regs[i] = mem[ir + i];
             }
-            ir += x_reg + 1; // see note on 0x55
+            ir += x_reg + 1; // see note on FX55
             pc += 2;
             return;
         default:
