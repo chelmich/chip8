@@ -2,9 +2,11 @@
 #include <stdint.h>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 #include "chip8.hpp"
 #include "screen.hpp"
+#include "bitmapfont.hpp"
 
 void print_registers(uint8_t regs[16]) {
     for (int i = 0; i < 16; i++) {
@@ -49,6 +51,13 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    int img_flags = IMG_INIT_PNG;
+    if (IMG_Init(img_flags) != img_flags) {
+        log_SDL_error("IMG_Init");
+        SDL_Quit();
+        return 1;
+    }
+
     Chip8 chip;
     chip.loadFont();
     chip.loadROM(argv[1]);
@@ -56,7 +65,7 @@ int main(int argc, char* argv[]) {
     chip.quirk_shift = true;
     chip.quirk_regs_load_store = true;
 
-    int scale = 8;
+    const int screen_scale = 8;
 
     Screen screen;
     screen.bg = {26, 42, 61, 255};
@@ -64,10 +73,11 @@ int main(int argc, char* argv[]) {
 
     SDL_Window* window = SDL_CreateWindow("chip-8 emulator",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        64 * scale + 20, 32 * scale + 20,
+        64 * screen_scale + 200, 32 * screen_scale,
         SDL_WINDOW_SHOWN);
     if (window == nullptr) {
         log_SDL_error("SDL_CreateWindow");
+        IMG_Quit();
         SDL_Quit();
         return 1;
     }
@@ -77,12 +87,16 @@ int main(int argc, char* argv[]) {
     if (renderer == nullptr) {
         log_SDL_error("SDL_CreateRenderer");
         SDL_DestroyWindow(window);
+        IMG_Quit();
         SDL_Quit();
         return 1;
     }
 
     screen.createTexture(renderer);
     screen.update(renderer, chip);
+
+    const int font_scale = 2;
+    BitmapFont gui_font(renderer,"../res/pixel_font_basic_latin_ascii.png", 7, 9);
 
     // Main loop
     bool shouldClose = false;
@@ -110,7 +124,19 @@ int main(int argc, char* argv[]) {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        screen.draw(renderer, 10, 10, scale);
+        screen.draw(renderer, 0, 0, screen_scale);
+
+        gui_font.drawStr("Registers:", 64 * screen_scale, 0, font_scale);
+        for (int i = 0; i < 8; i++) {
+            char line[20];
+            snprintf(line, 20, "V%X %02x   V%X %02x",
+                i, chip.regs[i],
+                i+8, chip.regs[i+8]);
+
+            int xpos = 64 * screen_scale;
+            int ypos = gui_font.char_height * font_scale * (i + 1);
+            gui_font.drawStr(line, xpos, ypos, font_scale);
+        }
 
         SDL_RenderPresent(renderer);
     }
@@ -119,6 +145,7 @@ int main(int argc, char* argv[]) {
     screen.destroyTexture();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    IMG_Quit();
     SDL_Quit();
 
     return 0;
