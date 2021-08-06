@@ -17,3 +17,5 @@ target_link_libraries(chip8 PRIVATE
 set_target_properties(chip8 PROPERTIES
     CMAKE_CXX_STANDARD 11
     CMAKE_CXX_STANDARD_REQUIRED ON)
+
+file(COPY res DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

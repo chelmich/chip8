@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
     screen.update(renderer, chip);
 
     const int font_scale = 2;
-    BitmapFont gui_font(renderer,"../res/pixel_font_basic_latin_ascii.png", 7, 9);
+    BitmapFont gui_font(renderer,"res/pixel_font_basic_latin_ascii.png", 7, 9);
 
     // Main loop
     bool shouldClose = false;
