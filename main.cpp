@@ -32,6 +32,26 @@ void print_memory(uint8_t mem[4096]) {
     }
 }
 
+void draw_registers(BitmapFont& font, Chip8 const& chip, int x, int y, int scale) {
+    const size_t line_buf_len = 20;
+    char line_buf[line_buf_len];
+
+    font.drawStr("Registers:", x, y, scale);
+    y += font.char_height * scale;
+
+    for (int i = 0; i < 8; i++) {
+        snprintf(line_buf, line_buf_len, "V%X %02x   V%X %02x",
+            i, chip.regs[i],
+            i+8, chip.regs[i+8]);
+
+        font.drawStr(line_buf, x, y, scale);
+        y += font.char_height * scale;
+    }
+
+    snprintf(line_buf, line_buf_len, "I  %04x", chip.ir);
+    font.drawStr(line_buf, x, y, scale);
+}
+
 void print_usage() {
     printf("Usage: ./chip8 [FILE]\n");
 }
@@ -125,18 +145,7 @@ int main(int argc, char* argv[]) {
         SDL_RenderClear(renderer);
 
         screen.draw(renderer, 0, 0, screen_scale);
-
-        gui_font.drawStr("Registers:", 64 * screen_scale, 0, font_scale);
-        for (int i = 0; i < 8; i++) {
-            char line[20];
-            snprintf(line, 20, "V%X %02x   V%X %02x",
-                i, chip.regs[i],
-                i+8, chip.regs[i+8]);
-
-            int xpos = 64 * screen_scale;
-            int ypos = gui_font.char_height * font_scale * (i + 1);
-            gui_font.drawStr(line, xpos, ypos, font_scale);
-        }
+        draw_registers(gui_font, chip, 64 * screen_scale, 0, font_scale);
 
         SDL_RenderPresent(renderer);
     }
