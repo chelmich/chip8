@@ -108,7 +108,7 @@ void print_disassembly(uint16_t instruction) {
         break;
     }
 
-    printf("Unknown instruction: %04x\n", instruction);
+    printf("Unknown disassembly for instruction: %04x\n", instruction);
 }
 
 void Chip8::update() {
@@ -306,7 +306,7 @@ void Chip8::update() {
         break;
     }
 
-    printf("Unknown instruction: %04x\n", instruction);
+    printf("UNKNOWN INSTRUCTION: %04x\n", instruction);
 }
 
 void Chip8::blit(uint8_t xpos, uint8_t ypos, uint8_t num) {
