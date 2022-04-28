@@ -61,7 +61,7 @@ void print_disassembly(uint16_t instruction) {
     uint8_t nn = instruction & 0x00ff; // low byte
     uint16_t nnn = instruction & 0x0fff; // low 3 nibbles
 
-    switch(opcode) {
+    switch (opcode) {
     case 0x0:
         if (instruction == 0x00e0) {
             printf("clear\n");
@@ -129,7 +129,7 @@ void Chip8::update() {
 
     print_disassembly(instruction);
 
-    switch(opcode) {
+    switch (opcode) {
     case 0x0:
         if (instruction == 0x00e0) {
             memset(screen, 0, sizeof(screen));
@@ -174,7 +174,7 @@ void Chip8::update() {
         pc += 2;
         return;
     case 0x8:
-        switch(n) {
+        switch (n) {
         case 0x0:
             regs[x_reg] = regs[y_reg];
             pc += 2;
@@ -261,7 +261,7 @@ void Chip8::update() {
         pc += 2;
         return;
     case 0xf:
-        switch(nn) {
+        switch (nn) {
         case 0x15:
             delay_timer = regs[x_reg];
             pc += 2;
