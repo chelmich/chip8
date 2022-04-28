@@ -88,6 +88,39 @@ void print_disassembly(uint16_t instruction) {
     case 0x6:
         printf("V%X := 0x%02x\n", x_reg, nn);
         return;
+    case 0x8:
+        switch (n) {
+        case 0x0:
+            printf("V%X := V%X\n", x_reg, y_reg);
+            return;
+        case 0x1:
+            printf("V%X |= V%X\n", x_reg, y_reg);
+            return;
+        case 0x2:
+            printf("V%X &= V%X\n", x_reg, y_reg);
+            return;
+        case 0x3:
+            printf("V%X ^= V%X\n", x_reg, y_reg);
+            return;
+        case 0x4:
+            printf("V%X += V%X\n", x_reg, y_reg);
+            return;
+        case 0x5:
+            printf("V%X -= V%X\n", x_reg, y_reg);
+            return;
+        case 0x6:
+            printf("V%X >>= V%X\n", x_reg, y_reg);
+            return;
+        case 0x7:
+            printf("V%X =- V%X\n", x_reg, y_reg);
+            return;
+        case 0xe:
+            printf("V%X <<= V%X\n", x_reg, y_reg);
+            return;
+        default:
+            break;
+        }
+        break;
     case 0x7:
         printf("V%X += 0x%02x\n", x_reg, nn);
         return;
