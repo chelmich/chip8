@@ -296,6 +296,10 @@ void Chip8::update() {
         ir = nnn + regs[0];
         pc += 2;
         return;
+    case 0xc:
+        regs[x_reg] = rand() & nn;
+        pc += 2;
+        return;
     case 0xd:
         blit(regs[x_reg], regs[y_reg], n);
         pc += 2;

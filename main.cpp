@@ -1,5 +1,6 @@
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -66,7 +67,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)  {
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         log_SDL_error("SDL_Init");
         return 1;
     }
@@ -77,6 +78,8 @@ int main(int argc, char* argv[]) {
         SDL_Quit();
         return 1;
     }
+
+    srand(0);
 
     Chip8 chip;
     chip.loadFont();
