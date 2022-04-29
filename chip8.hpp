@@ -26,6 +26,10 @@ public:
     // FX65 instructions.
     bool quirk_regs_load_store = false;
 
+    // On some implementations BNNN is interpreted as BXNN, i.e., instead of
+    // jumping to NNN + V0 it jumps to NNN + VX.
+    bool quirk_jump_with_offset = false;
+
     void loadROM(char* filename);
     void loadFont();
     void update();

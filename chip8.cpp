@@ -135,6 +135,7 @@ void print_disassembly(uint16_t instruction) {
         printf("I := 0x%03x\n", nnn);
         return;
     case 0xb:
+        // TODO: use quirk flag here
         printf("jump 0x%03x + V0\n", nnn);
         return;
     case 0xd:
@@ -293,8 +294,11 @@ void Chip8::update() {
         pc += 2;
         return;
     case 0xb:
-        ir = nnn + regs[0];
-        pc += 2;
+        if (!quirk_jump_with_offset) {
+            pc = nnn + regs[0];
+        } else {
+            pc = nnn + regs[x_reg];
+        }
         return;
     case 0xc:
         regs[x_reg] = rand() & nn;
