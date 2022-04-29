@@ -134,6 +134,9 @@ void print_disassembly(uint16_t instruction) {
     case 0xa:
         printf("I := 0x%03x\n", nnn);
         return;
+    case 0xb:
+        printf("jump 0x%03x + V0\n", nnn);
+        return;
     case 0xd:
         printf("sprite V%X V%X 0x%x\n", x_reg, y_reg, n);
         return;
@@ -289,12 +292,20 @@ void Chip8::update() {
         ir = nnn;
         pc += 2;
         return;
+    case 0xb:
+        ir = nnn + regs[0];
+        pc += 2;
+        return;
     case 0xd:
         blit(regs[x_reg], regs[y_reg], n);
         pc += 2;
         return;
     case 0xf:
         switch (nn) {
+        case 0x07:
+            regs[x_reg] = delay_timer;
+            pc += 2;
+            return;
         case 0x15:
             delay_timer = regs[x_reg];
             pc += 2;
