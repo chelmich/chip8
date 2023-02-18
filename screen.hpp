@@ -9,8 +9,8 @@ public:
     SDL_Color bg = {0, 0, 0, 255};
     SDL_Color fg = {255, 255, 255, 255};
 
-    void createTexture(SDL_Renderer* renderer);
-    void destroyTexture();
+    void create_texture(SDL_Renderer* renderer);
+    void destroy_texture();
 
     // Update the internal SDL_Texture to reflect the state of the Chip-8 screen
     void update(SDL_Renderer* renderer, Chip8 const& chip) const;

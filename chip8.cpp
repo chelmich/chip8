@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void Chip8::loadROM(char* filename) {
+void Chip8::load_program(char* filename) {
     FILE* fp = fopen(filename, "rb");
     if (fp == nullptr) {
         fprintf(stderr, "ERROR: failed to open file\n");
@@ -25,7 +25,7 @@ void Chip8::loadROM(char* filename) {
     fclose(fp);
 }
 
-void Chip8::loadFont() {
+void Chip8::load_font() {
     const uint8_t fontData[] = {
         0xf0, 0x90, 0x90, 0x90, 0xf0, // 0
         0x20, 0x60, 0x20, 0x20, 0x70, // 1

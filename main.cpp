@@ -38,7 +38,7 @@ void draw_registers(BitmapFont const& font, Chip8 const& chip, int x, int y, int
     const size_t line_buf_len = 20;
     char line_buf[line_buf_len];
 
-    font.drawStr("Registers:", x, y, scale);
+    font.draw_str("Registers:", x, y, scale);
     y += font.char_height * scale;
 
     for (int i = 0; i < 8; i++) {
@@ -46,20 +46,20 @@ void draw_registers(BitmapFont const& font, Chip8 const& chip, int x, int y, int
             i, chip.regs[i],
             i+8, chip.regs[i+8]);
 
-        font.drawStr(line_buf, x, y, scale);
+        font.draw_str(line_buf, x, y, scale);
         y += font.char_height * scale;
     }
 
     snprintf(line_buf, line_buf_len, "I  %04x", chip.ir);
-    font.drawStr(line_buf, x, y, scale);
+    font.draw_str(line_buf, x, y, scale);
     y += font.char_height * scale * 2;
 
     snprintf(line_buf, line_buf_len, "PC %04x", chip.pc);
-    font.drawStr(line_buf, x, y, scale);
+    font.draw_str(line_buf, x, y, scale);
     y += font.char_height * scale;
 
     snprintf(line_buf, line_buf_len, "DT %02x   ST %02x", chip.delay_timer, chip.sound_timer);
-    font.drawStr(line_buf, x, y, scale);
+    font.draw_str(line_buf, x, y, scale);
 }
 
 void print_usage() {
@@ -91,8 +91,8 @@ int main(int argc, char* argv[]) {
     srand(0);
 
     Chip8 chip;
-    chip.loadFont();
-    chip.loadROM(argv[1]);
+    chip.load_font();
+    chip.load_program(argv[1]);
 
     chip.quirk_shift = true;
     chip.quirk_regs_load_store = true;
@@ -126,7 +126,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    screen.createTexture(renderer);
+    screen.create_texture(renderer);
     screen.update(renderer, chip);
 
     const int font_scale = 2;
@@ -165,7 +165,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Clean up SDL
-    screen.destroyTexture();
+    screen.destroy_texture();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     IMG_Quit();

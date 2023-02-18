@@ -1,13 +1,13 @@
 #include "screen.hpp"
 
-void Screen::createTexture(SDL_Renderer* renderer) {
+void Screen::create_texture(SDL_Renderer* renderer) {
     m_texture = SDL_CreateTexture(renderer,
         SDL_PIXELFORMAT_RGB888,
         SDL_TEXTUREACCESS_TARGET,
         m_xres, m_yres);
 }
 
-void Screen::destroyTexture() {
+void Screen::destroy_texture() {
     SDL_DestroyTexture(m_texture);
 }
 

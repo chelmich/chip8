@@ -32,8 +32,8 @@ public:
     // jumping to NNN + V0 it jumps to NNN + VX.
     bool quirk_jump_with_offset = false;
 
-    void loadROM(char* filename);
-    void loadFont();
+    void load_program(char* filename);
+    void load_font();
     void update();
 
 private:

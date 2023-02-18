@@ -17,7 +17,7 @@ BitmapFont::~BitmapFont() {
     SDL_DestroyTexture(m_texture);
 }
 
-void BitmapFont::drawChar(char c, int x, int y, int scale) const {
+void BitmapFont::draw_char(char c, int x, int y, int scale) const {
     int cols = m_tex_width / char_width;
     int rows = m_tex_height / char_height;
 
@@ -31,9 +31,9 @@ void BitmapFont::drawChar(char c, int x, int y, int scale) const {
     SDL_RenderCopy(m_renderer, m_texture, &src_rect, &dst_rect);
 }
 
-void BitmapFont::drawStr(char const* str, int x, int y, int scale) const {
+void BitmapFont::draw_str(char const* str, int x, int y, int scale) const {
     size_t len = strlen(str);
     for (int i = 0; i < len; i++) {
-        drawChar(str[i], x + (char_width * scale * i), y, scale);
+        draw_char(str[i], x + (char_width * scale * i), y, scale);
     }
 }
