@@ -66,11 +66,17 @@ void print_disassembly(uint16_t instruction) {
         if (instruction == 0x00e0) {
             printf("clear\n");
             return;
+        } else if (instruction == 0x00ee) {
+            printf("return\n");
+            return;
         } else {
             break;
         }
     case 0x1:
         printf("jump 0x%03x\n", nnn);
+        return;
+    case 0x2:
+        printf("call 0x%03x\n", nnn);
         return;
     case 0x3:
         printf("skip V%X == 0x%02x\n", x_reg, nn);
@@ -109,12 +115,14 @@ void print_disassembly(uint16_t instruction) {
             printf("V%X -= V%X\n", x_reg, y_reg);
             return;
         case 0x6:
+            // TODO: use quirk_shift flag here
             printf("V%X >>= V%X\n", x_reg, y_reg);
             return;
         case 0x7:
             printf("V%X =- V%X\n", x_reg, y_reg);
             return;
         case 0xe:
+            // TODO: use quirk_shift flag here
             printf("V%X <<= V%X\n", x_reg, y_reg);
             return;
         default:
@@ -135,12 +143,22 @@ void print_disassembly(uint16_t instruction) {
         printf("I := 0x%03x\n", nnn);
         return;
     case 0xb:
-        // TODO: use quirk flag here
+        // TODO: use quirk_jump_with_offset flag here
         printf("jump 0x%03x + V0\n", nnn);
+        return;
+    case 0xc:
+        printf("V%X := random & 0x%02x\n", x_reg, nn);
         return;
     case 0xd:
         printf("sprite V%X V%X 0x%x\n", x_reg, y_reg, n);
         return;
+    case 0xf:
+        switch (nn) {
+        case 0x1e:
+            printf("I += V%X\n", x_reg);
+            return;
+        }
+        break;
     default:
         break;
     }
