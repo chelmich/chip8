@@ -17,8 +17,8 @@ public:
     uint8_t screen[(screen_width / 8) * screen_height] = {};
 
     // TODO: decrement
-    uint8_t delay_timer;
-    uint8_t sound_timer;
+    uint8_t delay_timer = 0;
+    uint8_t sound_timer = 0;
 
     // The original interpreter uses VY as the source for the bitshift
     // instructions. Later interpreters ignore it and shift VX in-place.
