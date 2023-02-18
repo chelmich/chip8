@@ -33,7 +33,7 @@ void print_memory(uint8_t mem[4096]) {
     }
 }
 
-void draw_registers(BitmapFont& font, Chip8 const& chip, int x, int y, int scale) {
+void draw_registers(BitmapFont const& font, Chip8 const& chip, int x, int y, int scale) {
     const size_t line_buf_len = 20;
     char line_buf[line_buf_len];
 

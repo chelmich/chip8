@@ -11,8 +11,8 @@ public:
     // Font pixel dimensions
     const int char_width, char_height;
 
-    void drawChar(char c, int x, int y, int scale);
-    void drawStr(char const* str, int x, int y, int scale);
+    void drawChar(char c, int x, int y, int scale) const;
+    void drawStr(char const* str, int x, int y, int scale) const;
 
 private:
     SDL_Renderer* m_renderer;
