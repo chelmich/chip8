@@ -1,13 +1,13 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include "chip8.hpp"
+#include "screen.hpp"
+#include "bitmapfont.hpp"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include "chip8.hpp"
-#include "screen.hpp"
-#include "bitmapfont.hpp"
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 void print_registers(uint8_t regs[16]) {
     for (int i = 0; i < 16; i++) {
@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
 
     SDL_Window* window = SDL_CreateWindow("chip-8 emulator",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        64 * screen_scale + 200, 32 * screen_scale,
+        chip.screen_width * screen_scale + 200, chip.screen_height * screen_scale,
         SDL_WINDOW_SHOWN);
     if (window == nullptr) {
         log_SDL_error("SDL_CreateWindow");
@@ -148,7 +148,7 @@ int main(int argc, char* argv[]) {
         SDL_RenderClear(renderer);
 
         screen.draw(renderer, 0, 0, screen_scale);
-        draw_registers(gui_font, chip, 64 * screen_scale, 0, font_scale);
+        draw_registers(gui_font, chip, chip.screen_width * screen_scale, 0, font_scale);
 
         SDL_RenderPresent(renderer);
     }

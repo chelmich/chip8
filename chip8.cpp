@@ -1,8 +1,8 @@
+#include "chip8.hpp"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "chip8.hpp"
 
 void Chip8::loadROM(char* filename) {
     FILE* fp = fopen(filename, "rb");

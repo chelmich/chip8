@@ -1,8 +1,8 @@
 #pragma once
 
-#include <SDL2/SDL_render.h>
-
 #include "chip8.hpp"
+
+#include <SDL2/SDL_render.h>
 
 class Screen {
 public:
