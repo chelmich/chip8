@@ -12,7 +12,9 @@ public:
     uint16_t ir = 0; // index register
     std::stack<uint16_t> stack = {};
 
-    uint8_t screen[256] = {};
+    static const int screen_width = 64;
+    static const int screen_height = 32;
+    uint8_t screen[(screen_width / 8) * screen_height] = {};
 
     // TODO: decrement
     uint8_t delay_timer;

@@ -361,31 +361,31 @@ void Chip8::update() {
     printf("UNKNOWN INSTRUCTION: %04x\n", instruction);
 }
 
-void Chip8::blit(uint8_t xpos, uint8_t ypos, uint8_t num) {
-    xpos %= 64;
-    ypos %= 32;
+void Chip8::blit(uint8_t x_pos, uint8_t y_pos, uint8_t num_lines) {
+    x_pos %= screen_width;
+    y_pos %= screen_height;
 
     regs[0xf] = 0;
 
-    for (int n = 0; n < num; n++) {
-        uint8_t sprite_line = mem[ir+n];
+    for (int n = 0; n < num_lines; n++) {
+        if (y_pos + n >= screen_height) break; // stop at screen edge
+
+        uint8_t sprite_line = mem[ir + n];
         for (int b = 0; b < 8; b++) {
-            if (xpos + b >= 64) break; // stop at screen edge
+            if (x_pos + b >= screen_width) break; // stop at screen edge
 
             bool sprite_bit = sprite_line & (1 << (7 - b));
             if (sprite_bit) {
-                int index = ypos * 64 + xpos + b;
-                uint8_t screen_bit = 1 << (index % 8);
-                uint8_t screen_byte = index / 8;
+                int index = (y_pos + n) * screen_width + x_pos + b;
+                uint8_t screen_bit_index = 1 << (index % 8);
+                uint8_t screen_byte_index = index / 8;
 
-                // Set flag register
-                if (screen[screen_byte] & screen_bit) regs[0xf] = 1;
+                // Set flag register on collision
+                if (screen[screen_byte_index] & screen_bit_index) regs[0xf] = 1;
 
                 // XOR to the screen
-                screen[screen_byte] ^= screen_bit;
+                screen[screen_byte_index] ^= screen_bit_index;
             }
         }
-        ypos++;
-        if (ypos >= 32) break; // stop at screen edge
     }
 }
