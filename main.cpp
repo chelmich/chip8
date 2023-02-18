@@ -9,27 +9,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void print_registers(uint8_t regs[16]) {
+void print_registers(Chip8 const& chip) {
     for (int i = 0; i < 16; i++) {
         printf("V%X  ", i);
     }
     printf("\n");
 
     for (int i = 0; i < 16; i++) {
-        printf("%02X  ", regs[i]);
+        printf("%02X  ", chip.regs[i]);
     }
     printf("\n");
 }
 
-void print_memory(uint8_t mem[4096]) {
-    int addr = 0;
-    while (addr < 4096) {
-        printf("0x%03x: ", addr);
-        for (int i = 0; i < 8; i++) {
-            printf("%02x%02x", mem[addr], mem[addr+1]);
-            putchar(i == 7 ? '\n' : ' ');
-            addr += 2;
+void print_memory(Chip8 const& chip) {
+    const int row_size = 16;
+    const int length = sizeof(chip.mem);
+    for (int row_addr = 0; row_addr < length; row_addr += row_size) {
+        printf("0x%03x:", row_addr);
+        for (int i = 0; i < row_size && row_addr + i < length; i++) {
+            if (i % 2 == 0) putchar(' ');
+            printf("%02x", chip.mem[row_addr + i]);
         }
+        putchar('\n');
     }
 }
 
@@ -72,7 +73,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    int img_flags = IMG_INIT_PNG;
+    const int img_flags = IMG_INIT_PNG;
     if (IMG_Init(img_flags) != img_flags) {
         log_SDL_error("IMG_Init");
         SDL_Quit();
@@ -94,10 +95,12 @@ int main(int argc, char* argv[]) {
     screen.bg = {26, 42, 61, 255};
     screen.fg = {202, 217, 235, 255};
 
+    const int window_width = chip.screen_width * screen_scale + 200;
+    const int window_height = chip.screen_height * screen_scale;
+    const uint32_t window_flags = SDL_WINDOW_SHOWN;
     SDL_Window* window = SDL_CreateWindow("chip-8 emulator",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        chip.screen_width * screen_scale + 200, chip.screen_height * screen_scale,
-        SDL_WINDOW_SHOWN);
+        window_width, window_height, window_flags);
     if (window == nullptr) {
         log_SDL_error("SDL_CreateWindow");
         IMG_Quit();
@@ -105,8 +108,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1,
-        SDL_RENDERER_ACCELERATED);
+    const uint32_t renderer_flags = SDL_RENDERER_ACCELERATED;
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, renderer_flags);
     if (renderer == nullptr) {
         log_SDL_error("SDL_CreateRenderer");
         SDL_DestroyWindow(window);
