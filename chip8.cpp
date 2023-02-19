@@ -151,6 +151,15 @@ void print_disassembly(uint16_t instruction) {
         return;
     case 0xf:
         switch (nn) {
+        case 0x07:
+            printf("V%X := DT\n", x_reg);
+            return;
+        case 0x15:
+            printf("DT := V%X\n", x_reg);
+            return;
+        case 0x18:
+            printf("ST := V%X\n", x_reg);
+            return;
         case 0x1e:
             printf("I += V%X\n", x_reg);
             return;
