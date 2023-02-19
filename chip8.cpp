@@ -191,11 +191,12 @@ void Chip8::update() {
 
     print_disassembly(instruction);
 
+    pc += 2;
+
     switch (opcode) {
     case 0x0:
         if (instruction == 0x00e0) {
             memset(screen, 0, sizeof(screen));
-            pc += 2;
             return;
         } else if (instruction == 0x00ee) {
             pc = stack.top();
@@ -208,172 +209,116 @@ void Chip8::update() {
         pc = nnn;
         return;
     case 0x2:
-        stack.push(pc + 2);
+        stack.push(pc);
         pc = nnn;
         return;
     case 0x3:
-        if (regs[x_reg] == nn) pc += 4;
-        else pc += 2;
+        if (regs[x_reg] == nn) pc += 2;
         return;
     case 0x4:
-        if (regs[x_reg] != nn) pc += 4;
-        else pc += 2;
+        if (regs[x_reg] != nn) pc += 2;
         return;
     case 0x5:
         if (n == 0x0) {
-            if (regs[x_reg] == regs[y_reg]) pc += 4;
-            else pc += 2;
+            if (regs[x_reg] == regs[y_reg]) pc += 2;
             return;
         } else {
             break;
         }
     case 0x6:
         regs[x_reg] = nn;
-        pc += 2;
         return;
     case 0x7:
         regs[x_reg] += nn;
-        pc += 2;
         return;
     case 0x8:
         switch (n) {
         case 0x0:
             regs[x_reg] = regs[y_reg];
-            pc += 2;
             return;
         case 0x1:
             regs[x_reg] |= regs[y_reg];
-            pc += 2;
             return;
         case 0x2:
             regs[x_reg] &= regs[y_reg];
-            pc += 2;
             return;
         case 0x3:
             regs[x_reg] ^= regs[y_reg];
-            pc += 2;
             return;
         case 0x4:
             regs[x_reg] += regs[y_reg];
             // TODO: set flags
-            pc += 2;
             return;
-        case 0x5: {
-            uint8_t flag;
-            if (regs[x_reg] > regs[y_reg]) flag = 0x1;
-            else flag = 0x0;
-
+        case 0x5:
+            regs[0xf] = (regs[x_reg] > regs[y_reg]) ? 1 : 0;
             regs[x_reg] = regs[x_reg] - regs[y_reg];
-            regs[0xf] = flag;
-            pc += 2;
             return;
-        }
-        case 0x6: {
+        case 0x6:
             if (!quirk_shift) regs[x_reg] = regs[y_reg];
-
-            uint8_t flag;
-            if (regs[x_reg] & 0x01) flag = 0x1;
-            else flag = 0x0;
-
+            regs[0xf] = regs[x_reg] & 1;
             regs[x_reg] >>= 1;
-            regs[0xf] = flag;
-            pc += 2;
             return;
-        }
-        case 0x7: {
-            uint8_t flag;
-            if (regs[y_reg] > regs[x_reg]) flag = 0x1;
-            else flag = 0x0;
-
+        case 0x7:
+            regs[0xf] = (regs[y_reg] > regs[x_reg]) ? 1 : 0;
             regs[x_reg] = regs[y_reg] - regs[x_reg];
-            regs[0xf] = flag;
-            pc += 2;
             return;
-        }
-        case 0xe: {
+        case 0xe:
             if (!quirk_shift) regs[x_reg] = regs[y_reg];
-
-            uint8_t flag;
-            if (regs[x_reg] & 0x80) flag = 0x1;
-            else flag = 0x0;
-
+            regs[0xf] = (regs[x_reg] & 0x80) >> 7;
             regs[x_reg] <<= 1;
-            regs[0xf] = flag;
-            pc += 2;
             return;
-        }
         default:
             break;
         }
         break;
     case 0x9:
         if (n == 0x0) {
-            if (regs[x_reg] != regs[y_reg]) pc += 4;
-            else pc += 2;
+            if (regs[x_reg] != regs[y_reg]) pc += 2;
             return;
         } else {
             break;
         }
     case 0xa:
         ir = nnn;
-        pc += 2;
         return;
     case 0xb:
-        if (!quirk_jump_with_offset) {
-            pc = nnn + regs[0];
-        } else {
-            pc = nnn + regs[x_reg];
-        }
+        pc = nnn + regs[quirk_jump_with_offset ? x_reg : 0];
         return;
     case 0xc:
         regs[x_reg] = rand() & nn;
-        pc += 2;
         return;
     case 0xd:
         blit(regs[x_reg], regs[y_reg], n);
-        pc += 2;
         return;
     case 0xf:
         switch (nn) {
         case 0x07:
             regs[x_reg] = dt;
-            pc += 2;
             return;
         case 0x15:
             dt = regs[x_reg];
-            pc += 2;
             return;
         case 0x18:
             st = regs[x_reg];
-            pc += 2;
             return;
         case 0x1e:
             ir += regs[x_reg];
-            pc += 2;
             return;
         case 0x29:
             ir = m_font_offset + (regs[x_reg] * 5);
-            pc += 2;
             return;
         case 0x33:
             mem[ir] = regs[x_reg] / 100;
             mem[ir + 1] = (regs[x_reg] / 10) % 10;
             mem[ir + 2] = regs[x_reg] % 10;
-            pc += 2;
             return;
         case 0x55:
-            for (int i = 0; i <= x_reg; i++) {
-                mem[ir + i] = regs[i];
-            }
+            for (int i = 0; i <= x_reg; i++) mem[ir + i] = regs[i];
             if (!quirk_regs_load_store) ir += x_reg + 1;
-            pc += 2;
             return;
         case 0x65:
-            for (int i = 0; i <= x_reg; i++) {
-                regs[i] = mem[ir + i];
-            }
+            for (int i = 0; i <= x_reg; i++) regs[i] = mem[ir + i];
             if (!quirk_regs_load_store) ir += x_reg + 1;
-            pc += 2;
             return;
         default:
             break;
