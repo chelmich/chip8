@@ -58,7 +58,7 @@ void draw_registers(BitmapFont const& font, Chip8 const& chip, int x, int y, int
     font.draw_str(line_buf, x, y, scale);
     y += font.char_height * scale;
 
-    snprintf(line_buf, line_buf_len, "DT %02x   ST %02x", chip.delay_timer, chip.sound_timer);
+    snprintf(line_buf, line_buf_len, "DT %02x   ST %02x", chip.dt, chip.st);
     font.draw_str(line_buf, x, y, scale);
 }
 

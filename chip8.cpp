@@ -15,18 +15,18 @@ void Chip8::load_program(char* filename) {
     long filelen = ftell(fp);
     rewind(fp);
 
-    if (filelen > 4096 - 0x200) {
+    if (filelen + program_offset > sizeof(mem)) {
         fprintf(stderr, "ERROR: program too large to load\n");
         exit(1);
     }
 
-    fread(mem + 0x200, filelen, 1, fp);
+    fread(mem + program_offset, filelen, 1, fp);
 
     fclose(fp);
 }
 
 void Chip8::load_font() {
-    const uint8_t fontData[] = {
+    static const uint8_t font_data[] = {
         0xf0, 0x90, 0x90, 0x90, 0xf0, // 0
         0x20, 0x60, 0x20, 0x20, 0x70, // 1
         0xf0, 0x10, 0xf0, 0x80, 0xf0, // 2
@@ -45,10 +45,7 @@ void Chip8::load_font() {
         0xf0, 0x80, 0xf0, 0x80, 0x80  // F
     };
 
-    int dataLen = sizeof(fontData)/sizeof(uint8_t);
-    for (int i = 0; i < dataLen; i++) {
-        mem[m_fontOffset + i] = fontData[i];
-    }
+    memcpy(mem + m_font_offset, font_data, sizeof(font_data));
 }
 
 void print_disassembly(uint16_t instruction) {
@@ -167,12 +164,13 @@ void print_disassembly(uint16_t instruction) {
 }
 
 void Chip8::update() {
-    if (pc >= 4096) {
+    if (pc + 1 >= sizeof(mem)) {
         fprintf(stderr, "ERROR: PC out of bounds\n");
         exit(1);
     }
 
-    uint16_t instruction = mem[pc] << 8 | mem[pc+1]; // fetch
+    uint16_t instruction = mem[pc] << 8 | mem[pc + 1]; // fetch
+
     uint8_t opcode = (instruction & 0xf000) >> 12;
 
     uint8_t x_reg = (instruction & 0x0f00) >> 8; // x register arg.
@@ -329,15 +327,15 @@ void Chip8::update() {
     case 0xf:
         switch (nn) {
         case 0x07:
-            regs[x_reg] = delay_timer;
+            regs[x_reg] = dt;
             pc += 2;
             return;
         case 0x15:
-            delay_timer = regs[x_reg];
+            dt = regs[x_reg];
             pc += 2;
             return;
         case 0x18:
-            sound_timer = regs[x_reg];
+            st = regs[x_reg];
             pc += 2;
             return;
         case 0x1e:
@@ -345,7 +343,7 @@ void Chip8::update() {
             pc += 2;
             return;
         case 0x29:
-            ir = m_fontOffset + (regs[x_reg] * 5);
+            ir = m_font_offset + (regs[x_reg] * 5);
             pc += 2;
             return;
         case 0x33:
