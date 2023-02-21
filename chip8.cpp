@@ -246,8 +246,8 @@ void Chip8::update() {
             regs[x_reg] ^= regs[y_reg];
             return;
         case 0x4:
+            regs[0xf] = (regs[x_reg] + regs[y_reg] > 0xff) ? 1 : 0;
             regs[x_reg] += regs[y_reg];
-            // TODO: set flags
             return;
         case 0x5:
             regs[0xf] = (regs[x_reg] > regs[y_reg]) ? 1 : 0;
