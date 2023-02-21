@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL_image.h>
 
-BitmapFont::BitmapFont(SDL_Renderer *renderer, char const *filename, int char_width, int char_height)
+BitmapFont::BitmapFont(SDL_Renderer* renderer, char const* filename, int char_width, int char_height)
     : char_width(char_width), char_height(char_height), m_renderer(renderer)
 {
     m_texture = IMG_LoadTexture(renderer, filename);
@@ -18,6 +18,8 @@ BitmapFont::~BitmapFont() {
 }
 
 void BitmapFont::draw_char(char c, int x, int y, int scale) const {
+    if (c < '!' || c > '~') return; // skip non-printing characters
+
     int cols = m_tex_width / char_width;
     int rows = m_tex_height / char_height;
 
@@ -33,7 +35,8 @@ void BitmapFont::draw_char(char c, int x, int y, int scale) const {
 
 void BitmapFont::draw_str(char const* str, int x, int y, int scale) const {
     size_t len = strlen(str);
+    int advance = (char_width + char_spacing) * scale;
     for (int i = 0; i < len; i++) {
-        draw_char(str[i], x + (char_width * scale * i), y, scale);
+        draw_char(str[i], x + advance * i, y, scale);
     }
 }

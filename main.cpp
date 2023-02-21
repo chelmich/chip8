@@ -38,8 +38,10 @@ void draw_registers(BitmapFont const& font, Chip8 const& chip, int x, int y, int
     const size_t line_buf_len = 20;
     char line_buf[line_buf_len];
 
+    int line_height = font.char_height * scale;
+
     font.draw_str("Registers:", x, y, scale);
-    y += font.char_height * scale;
+    y += line_height;
 
     for (int i = 0; i < 8; i++) {
         snprintf(line_buf, line_buf_len, "V%X %02x   V%X %02x",
@@ -47,16 +49,16 @@ void draw_registers(BitmapFont const& font, Chip8 const& chip, int x, int y, int
             i+8, chip.regs[i+8]);
 
         font.draw_str(line_buf, x, y, scale);
-        y += font.char_height * scale;
+        y += line_height;
     }
 
     snprintf(line_buf, line_buf_len, "I  %04x", chip.ir);
     font.draw_str(line_buf, x, y, scale);
-    y += font.char_height * scale * 2;
+    y += line_height * 2;
 
     snprintf(line_buf, line_buf_len, "PC %04x", chip.pc);
     font.draw_str(line_buf, x, y, scale);
-    y += font.char_height * scale;
+    y += line_height;
 
     snprintf(line_buf, line_buf_len, "DT %02x   ST %02x", chip.dt, chip.st);
     font.draw_str(line_buf, x, y, scale);
@@ -130,7 +132,8 @@ int main(int argc, char* argv[]) {
     screen.update(renderer, chip);
 
     const int font_scale = 2;
-    BitmapFont gui_font(renderer,"res/pixel_font_basic_latin_ascii.png", 7, 9);
+    BitmapFont gui_font(renderer, "res/pixel_font_basic_latin_ascii.png", 7, 9);
+    gui_font.char_spacing = -1;
 
     // Main loop
     bool shouldClose = false;

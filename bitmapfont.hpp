@@ -4,12 +4,12 @@
 
 class BitmapFont {
 public:
-    BitmapFont(SDL_Renderer *renderer, char const *filename, int char_width, int char_height);
+    BitmapFont(SDL_Renderer*, char const* filename, int char_width, int char_height);
 
     ~BitmapFont();
 
-    // Font pixel dimensions
     const int char_width, char_height;
+    int char_spacing = 0; // modifies horizontal distance between characters
 
     void draw_char(char c, int x, int y, int scale) const;
     void draw_str(char const* str, int x, int y, int scale) const;
